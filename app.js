@@ -158,6 +158,7 @@ function renderHistory() {
 function deleteRecord(i) {
   const rec = state.sessionHistory[i];
   DATA.mayTotal = Math.max(0, DATA.mayTotal - rec.amount);
+  DATA.todayUsage = Math.max(0, DATA.todayUsage - rec.amount);
   state.sessionHistory.splice(i, 1);
   renderHistory();
   updateHome();
