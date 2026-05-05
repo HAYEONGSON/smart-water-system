@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>방울방울 💧</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ════════════════ HOME PAGE ════════════════ -->
+  <div class="page active" id="page-home">
+    <div class="page-header">
+      <div class="logo">방<span>울</span>방<span>울</span></div>
+      <div class="subtitle">이번 달 물 사용량과 숨겨진 비용을 확인하세요!</div>
+    </div>
+
+    <div class="home-top">
+      <!-- Character -->
+      <div class="character-wrap">
+        <svg class="character-svg" id="character-svg" viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="dropGrad" cx="40%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#81d4fa"/>
+              <stop offset="100%" stop-color="#0288d1"/>
+            </radialGradient>
+          </defs>
+          <!-- Drop body -->
+          <path d="M50 8 C50 8, 82 52, 82 74 C82 97 67 116 50 116 C33 116 18 97 18 74 C18 52 50 8 50 8Z"
+                fill="url(#dropGrad)" stroke="#0277bd" stroke-width="1.5"/>
+          <!-- Shine -->
+          <ellipse cx="36" cy="42" rx="8" ry="5" fill="rgba(255,255,255,0.35)" transform="rotate(-30 36 42)"/>
+          <!-- Eyes -->
+          <circle cx="38" cy="68" r="6" fill="white"/>
+          <circle cx="62" cy="68" r="6" fill="white"/>
+          <circle id="eye-l" cx="40" cy="68" r="3" fill="#1a237e"/>
+          <circle id="eye-r" cx="64" cy="68" r="3" fill="#1a237e"/>
+          <!-- Mouth (smile) -->
+          <path id="mouth" d="M38 84 Q50 95 62 84" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div class="character-status" id="char-status">절약 중 🌿</div>
+      </div>
+
+    </div>
+
+    <!-- Today's Message -->
+    <div class="message-section">
+      <div class="message-card card">
+        <div class="message-emoji">🌟</div>
+        <div class="message-text" id="today-message">로딩 중...</div>
+      </div>
+    </div>
+
+    <!-- Quick Record Button -->
+    <div class="quick-btn-wrap">
+      <button class="btn-primary" onclick="goPage('record')">✏️ 사용량 확인하기</button>
+    </div>
+  </div>
+
+  <!-- ════════════════ RECORD PAGE ════════════════ -->
+  <div class="page" id="page-record">
+    <div class="page-header">
+      <div class="logo" style="font-size:1.5rem">기록하기</div>
+      <div class="subtitle">사용량을 입력하면 숨겨진 비용을 알려드려요</div>
+    </div>
+
+    <div class="record-input-card card">
+      <!-- Category -->
+      <div class="cat-row" id="cat-row">
+        <button class="cat-btn active" data-cat="세수">🧖 세수</button>
+        <button class="cat-btn" data-cat="양치">🪥 양치</button>
+        <button class="cat-btn" data-cat="샤워">🚿 샤워</button>
+        <button class="cat-btn" data-cat="기타">📝 기타</button>
+      </div>
+
+      <!-- Display -->
+      <div class="numpad-display" id="numpad-display">0 <span>L</span></div>
+      <div class="ton-display" id="ton-display">= 0.000 톤 (m³)</div>
+
+      <!-- Rate info -->
+      <div class="rate-info">💡 직접 비용 1,500원/톤 &nbsp;·&nbsp; 사회적 비용 4,500원/톤</div>
+
+      <!-- Real-time costs -->
+      <div class="realtime-costs">
+        <div class="rt-cost">
+          <div class="rt-cost-label">💧 직접 비용</div>
+          <div class="rt-cost-val" id="rt-water">0원</div>
+        </div>
+        <div class="rt-cost">
+          <div class="rt-cost-label">🌍 사회적 비용</div>
+          <div class="rt-cost-val" id="rt-social">0원</div>
+        </div>
+        <div class="rt-cost">
+          <div class="rt-cost-label">⚡ 에너지 비용</div>
+          <div class="rt-cost-val" id="rt-energy">0원</div>
+        </div>
+      </div>
+
+      <!-- Fun comparison -->
+      <div class="fun-comparison" id="fun-comparison">입력 후 이색 비교를 보여드려요 🎉</div>
+
+      <!-- Numpad -->
+      <div class="numpad-grid" id="numpad">
+        <button class="num-btn" data-n="7">7</button>
+        <button class="num-btn" data-n="8">8</button>
+        <button class="num-btn" data-n="9">9</button>
+        <button class="num-btn" data-n="4">4</button>
+        <button class="num-btn" data-n="5">5</button>
+        <button class="num-btn" data-n="6">6</button>
+        <button class="num-btn" data-n="1">1</button>
+        <button class="num-btn" data-n="2">2</button>
+        <button class="num-btn" data-n="3">3</button>
+        <button class="num-btn del" data-n="del">⌫</button>
+        <button class="num-btn" data-n="0">0</button>
+        <button class="num-btn save" data-n="save">✓</button>
+      </div>
+    </div>
+
+    <!-- Today's History -->
+    <div class="history-section">
+      <div class="section-title">오늘의 기록</div>
+      <div class="history-list" id="history-list"></div>
+    </div>
+
+    <!-- Last Month Summary -->
+    <div class="history-section">
+      <div class="section-title">지난달 (4월) 기록 요약</div>
+      <div class="history-list" id="lastmonth-summary"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════ STATS PAGE ════════════════ -->
+  <div class="page" id="page-stats">
+    <div class="page-header">
+      <div class="logo" style="font-size:1.5rem">통계 & 리워드</div>
+      <div class="subtitle">절약한 물이 만들어낸 가치를 확인하세요</div>
+    </div>
+
+    <!-- Hero: Savings -->
+    <div class="stats-hero">
+      <div class="hero-label">지난달 포항공대 평균 대비 절약 금액</div>
+      <div class="hero-amount" id="hero-amount">₩0</div>
+      <div class="hero-sub" id="hero-sub">0L를 절약하셨어요!</div>
+    </div>
+
+    <!-- Grade System -->
+    <div class="grade-card card">
+      <div class="grade-header">
+        <div class="grade-badge" id="grade-badge">💧</div>
+        <div class="grade-info">
+          <h3 id="grade-name">물방울</h3>
+          <p id="grade-xp">XP 750 / 2,000</p>
+        </div>
+      </div>
+      <div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width:0%"></div></div>
+      <div class="xp-labels">
+        <span id="xp-cur">750 XP</span>
+        <span id="xp-next">다음 등급까지 1,250 XP</span>
+      </div>
+    </div>
+
+    <!-- Daily Compare (오늘 vs 어제 vs 포스텍 평균) -->
+    <div class="compare-grid-3">
+      <div class="compare-card">
+        <div class="val" id="cmp-today">0L</div>
+        <div class="lbl">오늘 사용량</div>
+      </div>
+      <div class="compare-card">
+        <div class="val" id="cmp-yesterday">0L</div>
+        <div class="lbl">어제 사용량</div>
+      </div>
+      <div class="compare-card">
+        <div class="val" style="color:#e53935" id="cmp-postech">0L</div>
+        <div class="lbl">포스텍 일평균</div>
+      </div>
+    </div>
+
+    <!-- Daily Chart: 오늘 vs 어제 vs 포스텍 평균 -->
+    <div class="chart-card card">
+      <h3>일간 비교: 오늘 · 어제 · 포스텍 평균</h3>
+      <div class="chart-wrap" style="height:200px"><canvas id="chart-daily"></canvas></div>
+    </div>
+
+    <!-- Category Chart -->
+    <div class="chart-card card">
+      <h3>4월 카테고리별 사용 비중</h3>
+      <div class="chart-wrap" style="height:180px"><canvas id="chart-cat"></canvas></div>
+    </div>
+
+    <!-- Monthly Trend -->
+    <div class="chart-card card">
+      <h3>월별 사용량 추이</h3>
+      <div class="chart-wrap"><canvas id="chart-monthly"></canvas></div>
+    </div>
+
+    <!-- Incentive -->
+    <div class="incentive-card card">
+      <div class="incentive-title">💰 인센티브 리포트 (4월 기준)</div>
+      <div class="incentive-row">
+        <span class="label">절약한 물</span>
+        <span class="value" id="inc-saved-l">0 L</span>
+      </div>
+      <div class="incentive-row">
+        <span class="label">수도 요금 감면 (추정)</span>
+        <span class="value" id="inc-water-save">0 원</span>
+      </div>
+      <div class="incentive-row">
+        <span class="label">사회적 기여 환산액</span>
+        <span class="value" id="inc-social-save">0 원</span>
+      </div>
+      <div class="incentive-row">
+        <span class="label">획득 XP</span>
+        <span class="value" id="inc-xp">+0 XP</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ BOTTOM NAV ════════════════ -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-page="home" onclick="goPage('home')">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+      <span>홈</span>
+    </button>
+    <button class="nav-btn" data-page="record" onclick="goPage('record')">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/>
+      </svg>
+      <span>기록</span>
+    </button>
+    <button class="nav-btn" data-page="stats" onclick="goPage('stats')">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+      </svg>
+      <span>통계</span>
+    </button>
+  </nav>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
