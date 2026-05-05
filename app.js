@@ -105,17 +105,14 @@ function updateNumpadDisplay() {
   $('rt-social').textContent = val ? `${fmt(social)}원` : '0원';
   $('rt-energy').textContent = val ? `${fmt(energy)}원` : '0원';
 
-  // 이색 비교 (순환): 초코송이 / 비트코인 사토시 / 스마트폰 충전
+  // 이색 비교 (DATA.funComparisons 순환)
   if (val > 0) {
-    const satoshi = Math.round(val * 3);           // social cost / 1.5원 per satoshi
-    const choco   = Math.round(val * 3.3);         // 가상 수자원 기준
-    const charge  = Math.round(val * 5);           // 에너지 환산
-    const comparisons = [
-      `초코송이 🍫 <strong>${fmt(choco)}개</strong> 를 만드는 가상 수자원이에요!`,
-      `비트코인 ₿ <strong>${fmt(satoshi)} 사토시</strong> 와 같은 사회적 비용이에요!`,
-      `스마트폰을 <strong>${fmt(charge)}번</strong> 충전할 에너지가 쓰였어요! 📱`,
-    ];
-    $('fun-comparison').innerHTML = comparisons[val % 3];
+    const fc = DATA.funComparisons;
+    const idx = val % fc.length;
+    const item = fc[idx];
+    const amount = (val * item.rate).toFixed(1);
+    $('fun-comparison').innerHTML =
+      `${item.label} <strong>${amount}${item.unit}</strong> 에 해당하는 사회적 비용이에요!`;
   } else {
     $('fun-comparison').textContent = '입력 후 이색 비교를 보여드려요 🎉';
   }
