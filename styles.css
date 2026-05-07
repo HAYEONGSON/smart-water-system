@@ -208,6 +208,36 @@ body {
 .message-text { font-size: 0.85rem; line-height: 1.6; }
 .message-text strong { color: var(--primary-dark); }
 
+/* Per-ton cost info card */
+.cost-info-section { padding: 0 20px 16px; }
+.cost-info-card { padding: 14px 16px; }
+.cost-info-header {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  text-align: center;
+}
+.cost-info-rows { display: flex; flex-direction: column; gap: 7px; }
+.cost-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+.cir-label { color: var(--text); }
+.cir-val { font-weight: 700; color: var(--text); }
+.cir-val.highlight { color: var(--primary-dark); font-size: 0.95rem; }
+.cost-info-divider {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 4px 0 2px;
+  border-top: 1px solid rgba(0,100,160,0.1);
+  margin-top: 2px;
+}
+
 /* Quick record btn */
 .quick-btn-wrap { padding: 0 20px 16px; }
 .btn-primary {
