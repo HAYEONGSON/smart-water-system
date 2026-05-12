@@ -336,6 +336,7 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
+  margin-top: 10px;
 }
 .num-btn {
   padding: 16px 8px;
@@ -426,6 +427,44 @@ body {
 .history-del:hover { color: var(--red); }
 
 /* ─── Stats Page ─── */
+.today-reward-card {
+  margin: 0 20px 16px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #00acc1, #00897b);
+  color: white;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px rgba(0,137,123,0.3);
+}
+.trc-label {
+  font-size: 0.78rem;
+  opacity: 0.85;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.trc-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.trc-stat { text-align: center; }
+.trc-stat-val {
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+.trc-stat-lbl { font-size: 0.68rem; opacity: 0.8; margin-top: 4px; }
+.trc-msg {
+  margin-top: 10px;
+  background: rgba(0,0,0,0.12);
+  border-radius: 10px;
+  padding: 7px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+  display: none;
+}
+
 .stats-hero {
   margin: 0 20px 16px;
   padding: 20px;

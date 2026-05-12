@@ -1,11 +1,49 @@
+// ─── Firebase ─────────────────────────────────────────────
+firebase.initializeApp({
+  apiKey: "AIzaSyBSzuYeD6YxVuGZT4eJc3C6V5gfQji0_Ho",
+  databaseURL: "https://watersaving-341c6-default-rtdb.firebaseio.com",
+  projectId: "watersaving-341c6",
+  appId: "1:46834378695:web:91dc3086d439b11b9b9be2"
+});
+const db = firebase.database();
+
+function getUserId() {
+  let uid = localStorage.getItem('bangul_uid');
+  if (!uid) {
+    uid = 'u' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    localStorage.setItem('bangul_uid', uid);
+  }
+  return uid;
+}
+
+const recordsRef = db.ref(`users/${getUserId()}/records`);
+
+function persistRecords(records) {
+  recordsRef.set(records.length ? records : null);
+}
+
 // ─── State ───────────────────────────────────────────────
 const state = {
   currentPage: 'home',
   numInput: '',
   selectedCat: '세수',
-  sessionHistory: [...DATA.todayHistory],
+  sessionHistory: [],
   chartsInit: false,
 };
+
+// Firebase 실시간 동기화
+const todayDate = new Date().toISOString().slice(0, 10);
+
+recordsRef.on('value', snapshot => {
+  const val = snapshot.val();
+  const all = val ? (Array.isArray(val) ? val : Object.values(val)) : [];
+  state.sessionHistory = all.filter(r => !r.date || r.date === todayDate);
+  DATA.todayUsage = state.sessionHistory.reduce((sum, r) => sum + r.amount, 0);
+  DATA.mayTotal   = DATA.may.slice(0, 4).reduce((s, r) => s + r.total, 0) + DATA.todayUsage;
+  renderHistory();
+  updateHome();
+  if (state.chartsInit) updateStats();
+});
 
 // ─── Utility ─────────────────────────────────────────────
 const $ = id => document.getElementById(id);
@@ -26,7 +64,10 @@ function goPage(name) {
   });
   $(`page-${name}`).classList.add('active');
   state.currentPage = name;
-  if (name === 'stats' && !state.chartsInit) initCharts();
+  if (name === 'stats') {
+    if (!state.chartsInit) initCharts();
+    else updateStats();
+  }
 }
 
 // ─── Home Page ───────────────────────────────────────────
@@ -125,9 +166,10 @@ function saveRecord() {
   const now = new Date();
   const time = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
-  state.sessionHistory.unshift({ time, cat: state.selectedCat, amount: val });
+  state.sessionHistory.unshift({ time, date: todayDate, cat: state.selectedCat, amount: val });
   DATA.mayTotal += val;
   DATA.todayUsage += val;
+  persistRecords(state.sessionHistory);
 
   state.numInput = '';
   updateNumpadDisplay();
@@ -160,6 +202,7 @@ function deleteRecord(i) {
   DATA.mayTotal = Math.max(0, DATA.mayTotal - rec.amount);
   DATA.todayUsage = Math.max(0, DATA.todayUsage - rec.amount);
   state.sessionHistory.splice(i, 1);
+  persistRecords(state.sessionHistory);
   renderHistory();
   updateHome();
   showToast('기록을 삭제했어요');
@@ -198,6 +241,29 @@ function renderLastMonthSummary() {
 
 // ─── Stats Page ──────────────────────────────────────────
 function updateStats() {
+  // Today vs daily average reward
+  const todaySaved = Math.max(0, DATA.postech.dailyAvg - DATA.todayUsage);
+  const todayOver  = Math.max(0, DATA.todayUsage - DATA.postech.dailyAvg);
+  if (DATA.todayUsage === 0) {
+    $('trc-saved-l').textContent   = '—';
+    $('trc-saved-won').textContent = '—';
+    $('trc-xp').textContent        = '—';
+    $('trc-msg').textContent       = '오늘 사용 기록이 없어요';
+    $('trc-msg').style.display     = 'block';
+  } else if (todaySaved > 0) {
+    $('trc-saved-l').textContent   = `${fmt(todaySaved)}L`;
+    $('trc-saved-won').textContent = `${fmt(Math.round(todaySaved * DATA.rates.water))}원`;
+    $('trc-xp').textContent        = `+${Math.round(todaySaved * 0.5)} XP`;
+    $('trc-msg').textContent       = '';
+    $('trc-msg').style.display     = 'none';
+  } else {
+    $('trc-saved-l').textContent   = '0L';
+    $('trc-saved-won').textContent = '0원';
+    $('trc-xp').textContent        = '+0 XP';
+    $('trc-msg').textContent       = `평균보다 ${fmt(todayOver)}L 더 사용했어요 ⚠️`;
+    $('trc-msg').style.display     = 'block';
+  }
+
   const saved = Math.max(0, DATA.aprilSaved);
   const heroAmt = Math.round(saved * DATA.rates.water);
   $('hero-amount').textContent = `₩${fmt(heroAmt)}`;
@@ -224,6 +290,12 @@ function updateStats() {
   $('cmp-today').textContent     = `${fmt(DATA.todayUsage)}L`;
   $('cmp-yesterday').textContent = `${fmt(DATA.yesterdayUsage)}L`;
   $('cmp-postech').textContent   = `${fmt(DATA.postech.dailyAvg)}L`;
+
+  // 일간 차트 데이터 갱신
+  if (dailyChart) {
+    dailyChart.data.datasets[0].data[0] = DATA.todayUsage;
+    dailyChart.update();
+  }
 
   // Incentive
   $('inc-saved-l').textContent    = `${fmt(saved)} L`;
@@ -309,9 +381,8 @@ function initCharts() {
     { label: '2월', val: 4620 },
     { label: '3월', val: 4810 },
     { label: '4월', val: DATA.aprilTotal },
-    { label: '5월', val: DATA.mayTotal },
   ];
-  const posteachMonthly = [7000, 7250, DATA.posteachMonthlyAvg, DATA.postech.dailyAvg * 5];
+  const posteachMonthly = [7000, 7250, DATA.posteachMonthlyAvg];
 
   monthlyChart = new Chart($('chart-monthly'), {
     type: 'line',
@@ -346,7 +417,7 @@ function initCharts() {
       maintainAspectRatio: false,
       plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } } },
       scales: {
-        y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 10 }, callback: v => `${(v/1000).toFixed(1)}톤` } },
+        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 10 }, callback: v => `${(v/1000).toFixed(1)}톤` } },
         x: { grid: { display: false }, ticks: { font: { size: 11 } } },
       },
     },
@@ -354,8 +425,6 @@ function initCharts() {
 }
 
 // ─── Init ─────────────────────────────────────────────────
-updateHome();
 setupNumpad();
-renderHistory();
 renderLastMonthSummary();
 updateNumpadDisplay();

@@ -84,7 +84,7 @@
             <div class="cfr-val">1.1잔</div>
           </div>
           <div class="cfr-item">
-            <div class="cfr-emoji">🍫</div>
+            <div class="cfr-emoji">🍄‍🟫</div>
             <div class="cfr-name">초코송이</div>
             <div class="cfr-val">3.8개</div>
           </div>
@@ -177,11 +177,24 @@
       <div class="subtitle">절약한 물이 만들어낸 가치를 확인하세요</div>
     </div>
 
-    <!-- Hero: Savings -->
-    <div class="stats-hero">
-      <div class="hero-label">지난달 포항공대 평균 대비 절약 금액</div>
-      <div class="hero-amount" id="hero-amount">₩0</div>
-      <div class="hero-sub" id="hero-sub">0L를 절약하셨어요!</div>
+    <!-- Today vs Daily Average -->
+    <div class="today-reward-card">
+      <div class="trc-label">포스텍 일평균 대비 오늘 절약</div>
+      <div class="trc-stats">
+        <div class="trc-stat">
+          <div class="trc-stat-val" id="trc-saved-l">—</div>
+          <div class="trc-stat-lbl">절약한 물</div>
+        </div>
+        <div class="trc-stat">
+          <div class="trc-stat-val" id="trc-saved-won">—</div>
+          <div class="trc-stat-lbl">절감 금액</div>
+        </div>
+        <div class="trc-stat">
+          <div class="trc-stat-val" id="trc-xp">—</div>
+          <div class="trc-stat-lbl">획득 XP</div>
+        </div>
+      </div>
+      <div class="trc-msg" id="trc-msg"></div>
     </div>
 
     <!-- Grade System -->
@@ -254,6 +267,13 @@
         <span class="value" id="inc-xp">+0 XP</span>
       </div>
     </div>
+
+    <!-- Hero: Savings -->
+    <div class="stats-hero">
+      <div class="hero-label">지난달 포항공대 평균 대비 절약 금액</div>
+      <div class="hero-amount" id="hero-amount">₩0</div>
+      <div class="hero-sub" id="hero-sub">0L를 절약하셨어요!</div>
+    </div>
   </div>
 
   <!-- ════════════════ BOTTOM NAV ════════════════ -->
@@ -282,6 +302,8 @@
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script src="data.js"></script>
 <script src="app.js"></script>
 </body>
