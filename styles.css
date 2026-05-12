@@ -258,6 +258,19 @@ body {
 .cfr-emoji { font-size: 1.1rem; }
 .cfr-name { font-size: 0.65rem; color: var(--text-muted); margin: 1px 0; }
 .cfr-val { font-size: 0.82rem; font-weight: 800; color: #e65100; }
+.cost-energy-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.cer-item {
+  background: #fff3e0;
+  border-radius: 10px;
+  padding: 8px 6px;
+  text-align: center;
+}
+.cer-facility { font-size: 0.68rem; color: var(--text-muted); margin-bottom: 3px; }
+.cer-val { font-size: 0.82rem; font-weight: 800; color: #e65100; }
 
 /* Quick record btn */
 .quick-btn-wrap { padding: 0 20px 16px; }
