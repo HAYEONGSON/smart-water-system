@@ -244,6 +244,7 @@ body {
   margin-bottom: 8px;
   border-top: 1px solid rgba(0,100,160,0.08);
 }
+.cost-fun-label.no-border { border-top: none; padding-top: 4px; }
 .cost-fun-row {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
