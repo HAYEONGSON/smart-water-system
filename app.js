@@ -32,14 +32,17 @@ const state = {
 };
 
 // Firebase 실시간 동기화
-const todayDate = new Date().toISOString().slice(0, 10);
+const todayDate     = new Date().toISOString().slice(0, 10);
+const yesterdayDate = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
 
 recordsRef.on('value', snapshot => {
   const val = snapshot.val();
   const all = val ? (Array.isArray(val) ? val : Object.values(val)) : [];
-  state.sessionHistory = all.filter(r => !r.date || r.date === todayDate);
-  DATA.todayUsage = state.sessionHistory.reduce((sum, r) => sum + r.amount, 0);
-  DATA.mayTotal   = DATA.may.slice(0, 4).reduce((s, r) => s + r.total, 0) + DATA.todayUsage;
+  state.sessionHistory  = all.filter(r => !r.date || r.date === todayDate);
+  const yesterdayRecs   = all.filter(r => r.date === yesterdayDate);
+  DATA.todayUsage     = state.sessionHistory.reduce((sum, r) => sum + r.amount, 0);
+  DATA.yesterdayUsage = yesterdayRecs.reduce((sum, r) => sum + r.amount, 0);
+  DATA.mayTotal       = DATA.may.slice(0, 4).reduce((s, r) => s + r.total, 0) + DATA.todayUsage;
   renderHistory();
   updateHome();
   if (state.chartsInit) updateStats();
@@ -313,10 +316,14 @@ function initCharts() {
   Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
 
   // ── 일간 비교: 오늘 vs 어제 vs 포스텍 평균 ──
+  const now = new Date();
+  const yd  = new Date(Date.now() - 86400000);
+  const todayLabel     = `오늘 (${now.getMonth()+1}/${now.getDate()})`;
+  const yesterdayLabel = `어제 (${yd.getMonth()+1}/${yd.getDate()})`;
   dailyChart = new Chart($('chart-daily'), {
     type: 'bar',
     data: {
-      labels: ['오늘 (5/5)', '어제 (5/4)', '포스텍 일평균'],
+      labels: [todayLabel, yesterdayLabel, '포스텍 일평균'],
       datasets: [{
         label: '사용량 (L)',
         data: [DATA.todayUsage, DATA.yesterdayUsage, DATA.postech.dailyAvg],
